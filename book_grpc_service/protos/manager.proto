@@ -28,6 +28,10 @@ message GetBookResult {
   string book_name = 2;
   string book_author = 3;
   string book_desc = 4;
+  string book_url = 5;
+  google.protobuf.Timestamp create_time = 6;
+  google.protobuf.Timestamp update_time = 7;
+
 }
 
 // get book list by user
@@ -37,7 +41,7 @@ message GetBookListRequest {
 }
 
 message GetBookListResult {
-  repeated GetBookRequest result = 1;
+  repeated GetBookResult result = 1;
 }
 
 service BookManager {

@@ -1,5 +1,6 @@
 import datetime
-from typing import TypedDict, Optional, List
+from typing import Optional, List
+from typing_extensions import TypedDict
 from book_grpc_service.helper.conn_proxy import context_proxy
 
 
@@ -16,7 +17,7 @@ class ManagerDal(object):
     def create_book(*, isbn: str, book_name: str, author: str, book_desc: str, book_url: str) -> None:
         with context_proxy.conn.cursor() as cursor:
             cursor.execute(
-                "INSERT INTO book_info (isbn, book_name, author, book_desc, book_url) VALUES (%s, %s, %s, %s, %s)",
+                "INSERT INTO book_info (isbn, book_name, book_author, book_desc, book_url) VALUES (%s, %s, %s, %s, %s)",
                 (isbn, book_name, author, book_desc, book_url)
             )
 
@@ -30,7 +31,9 @@ class ManagerDal(object):
     @staticmethod
     def get_book(*, isbn: str) -> BookTypedDict:
         with context_proxy.conn.cursor() as cursor:
-            cursor.execute("SELECT * FROM book_info WHERE isbn=%s and deleted=0", (isbn, ))
+            cursor.execute(
+                "SELECT isbn, book_name, book_author, book_desc, book_url, create_time, update_time"
+                " FROM book_info WHERE isbn=%s and deleted=0", (isbn, ))
             book_info_dict: BookTypedDict = cursor.fetchone() or {}
             if not book_info_dict:
                 raise RuntimeError(f"Can not found book by:{isbn}")
@@ -41,12 +44,15 @@ class ManagerDal(object):
             *, create_time: Optional[datetime.datetime] = None, limit: Optional[int] = None
     ) -> List[BookTypedDict]:
         with context_proxy.conn.cursor() as cursor:
-            sql: str = "SELECT * FROM book_info WHERE deleted=0"
+            sql: str = (
+                "SELECT isbn, book_name, book_author, book_desc, book_url, create_time, update_time"
+                " FROM book_info WHERE deleted=0"
+            )
             param_list: list = []
             if create_time:
                 sql += " AND create_time <= %s"
                 param_list.append(create_time)
-            sql += "ORDER BY create_time desc limit %s"
+            sql += " ORDER BY create_time desc limit %s"
             param_list.append(limit or 20)
             cursor.execute(sql, param_list)
             return cursor.fetchall() or []

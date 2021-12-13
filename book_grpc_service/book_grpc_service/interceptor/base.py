@@ -1,11 +1,11 @@
 import abc
 import logging
 import uuid
-from typing import Any, Callable, Optional, Tuple
+from typing import Any, Callable, Tuple
 
 import grpc
 
-from book_grpc_service.helper.context import Token, context_proxy
+from book_grpc_service.helper.context import context_proxy, WithContext
 
 logger: logging.Logger = logging.getLogger()
 
@@ -80,16 +80,13 @@ class BaseInterceptor(grpc.ServerInterceptor):
         handler_factory, next_handler_method, grpc_type = _get_factory_and_method(next_handler)
 
         def invoke_intercept_method(request_proto_message: Any, context: grpc.ServicerContext) -> Any:
-            token: Optional[Token] = None
             if not context_proxy.inited:
-                token = context_proxy.set_context({})
-                self._context_handle(handler_call_details)
-                context_proxy.grpc_type = grpc_type
-            try:
+                with WithContext():
+                    self._context_handle(handler_call_details)
+                    context_proxy.grpc_type = grpc_type
+                    return self.intercept(next_handler_method, request_proto_message, context)
+            else:
                 return self.intercept(next_handler_method, request_proto_message, context)
-            finally:
-                if token:
-                    context_proxy.reset_context(token)
 
         return handler_factory(
             invoke_intercept_method,

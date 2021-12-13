@@ -1,6 +1,6 @@
 create database if not exists grpc_example;
 use grpc_example;
-create table book_comment (
+create table if not exists book_comment (
     isbn varchar(32) not null comment 'book isbn',
     content text  null comment 'book comment content',
     uid varchar(32) not null comment 'comment uid',
@@ -9,7 +9,7 @@ create table book_comment (
     deleted                 tinyint(2)  default 0                 not null
 ) comment 'book comment';
 
-create table book_like (
+create table if not exists book_like (
     isbn varchar(32) not null comment 'book isbn',
     uid varchar(32) not null comment 'comment uid',
     `like` tinyint(2) not null comment 'user like book flag',
@@ -18,7 +18,7 @@ create table book_like (
     deleted                 tinyint(2)  default 0                 not null
 ) comment 'user like book flag';
 
-create table book (
+create table if not exists book_info (
     isbn varchar(32) not null comment 'book isbn',
     book_name varchar(255) not null comment 'book name',
     book_author varchar(255) not null comment 'book author',

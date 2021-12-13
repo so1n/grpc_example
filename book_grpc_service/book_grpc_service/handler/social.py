@@ -1,18 +1,11 @@
-import logging
-
-import google.protobuf
 import grpc
 from google.protobuf.empty_pb2 import Empty
 
 from book_grpc_service.dal.social import social_dal
-from book_grpc_service.helper.conn_proxy import conn_proxy
-from book_grpc_service.helper.field import proto_load, repeat_to_list, timestamp_to_date, timestamp_to_datetime
+from book_grpc_service.helper.field import proto_load
 
 from book_grpc_service.protos import social_pb2 as social_message
 from book_grpc_service.protos import social_pb2_grpc as social_service
-
-
-logging: logging.Logger = logging.getLogger(__name__)
 
 
 class SocialService(social_service.BookSocialServicer):

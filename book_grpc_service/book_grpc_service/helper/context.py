@@ -30,8 +30,9 @@ class WithContext(Context):
         self._token: Optional[Token] = None
 
     def __enter__(self) -> "WithContext":
-        self._token = _request_context.set({})
-        return self
+        if self._token:
+            self._token = _request_context.set({})
+            return self
 
     def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
         if self._token:

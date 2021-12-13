@@ -1,6 +1,7 @@
 import datetime
-from typing import Any, Dict, List, Optional, TypedDict
+from typing import Any, Dict, List, Optional
 from book_grpc_service.helper.conn_proxy import context_proxy
+from typing_extensions import TypedDict
 
 
 class CommentTypedDict(TypedDict):

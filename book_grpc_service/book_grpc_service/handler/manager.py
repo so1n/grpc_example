@@ -1,15 +1,11 @@
-import logging
-
 import grpc
 from google.protobuf.empty_pb2 import Empty
 
 from book_grpc_service.dal.manager import manager_dal
 from book_grpc_service.helper.conn_proxy import conn_proxy
-from book_grpc_service.helper.field import proto_load
+from book_grpc_service.helper.field import proto_load, timestamp_to_datetime
 from book_grpc_service.protos import manager_pb2 as manager_message
 from book_grpc_service.protos import manager_pb2_grpc as manager_service
-
-logging: logging.Logger = logging.getLogger(__name__)
 
 
 class ManagerService(manager_service.BookManagerServicer):
@@ -35,11 +31,11 @@ class ManagerService(manager_service.BookManagerServicer):
     @conn_proxy()
     def get_book(self, request: manager_message.GetBookRequest,
                  context: grpc.ServicerContext) -> manager_message.GetBookResult:
-        return manager_message.GetBookResult(**manager_dal.get_book(isbn=request.isbn))
+        return manager_message.GetBookResult(**proto_load(manager_dal.get_book(isbn=request.isbn)))
 
     @conn_proxy()
     def get_book_list(self, request: manager_message.GetBookListRequest,
                       context: grpc.ServicerContext) -> manager_message.GetBookListResult:
         return manager_message.GetBookListResult(
-            result=proto_load(manager_dal.get_book_list(create_time=request.next_create_time, limit=request.limit))
+            result=proto_load(manager_dal.get_book_list(create_time=timestamp_to_datetime(request.next_create_time, default=None), limit=request.limit))
         )

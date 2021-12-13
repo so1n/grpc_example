@@ -2,16 +2,8 @@ import inspect
 import logging
 from typing import Any, Callable, Dict, List, Optional, Type
 
-from common.components.context_proxy import context_proxy
-from common.exception import (
-    base_exception,
-    call_exception,
-    call_other_system,
-    case_exception,
-    param_exception,
-    sms_exception,
-    user_exception,
-)
+from book_grpc_service.helper.conn_proxy import context_proxy
+
 
 from .base import GRPC_RESPONSE, BaseInterceptor, ClientCallDetailsType
 
@@ -24,22 +16,6 @@ class CustomerTopInterceptor(BaseInterceptor):
         for key, exc in globals()["__builtins__"].items():
             if inspect.isclass(exc) and issubclass(exc, Exception):
                 self.exc_dict[key] = exc
-        for exc_module in [
-            base_exception,
-            call_exception,
-            case_exception,
-            param_exception,
-            sms_exception,
-            param_exception,
-            user_exception,
-            call_other_system,
-        ]:
-            for exc_name in dir(exc_module):
-                exc = getattr(exc_module, exc_name, None)
-                if not exc:
-                    continue
-                if inspect.isclass(exc) and issubclass(exc, base_exception.BaseServerException):
-                    self.exc_dict[exc.__name__] = exc
         if exc_list:
             for exc in exc_list:
                 if issubclass(exc, Exception):
