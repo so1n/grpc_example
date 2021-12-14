@@ -1,7 +1,7 @@
 create database if not exists grpc_example;
 use grpc_example;
 create table if not exists book_comment (
-    isbn varchar(32) not null comment 'book isbn',
+    isbn varchar(32) not null comment 'book isbn' primary key ,
     content text  null comment 'book comment content',
     uid varchar(32) not null comment 'comment uid',
     create_time             timestamp   default CURRENT_TIMESTAMP null,
@@ -10,7 +10,7 @@ create table if not exists book_comment (
 ) comment 'book comment';
 
 create table if not exists book_like (
-    isbn varchar(32) not null comment 'book isbn',
+    isbn varchar(32) not null comment 'book isbn' primary key ,
     uid varchar(32) not null comment 'comment uid',
     `like` tinyint(2) not null comment 'user like book flag',
     create_time             timestamp   default CURRENT_TIMESTAMP null,
@@ -19,7 +19,7 @@ create table if not exists book_like (
 ) comment 'user like book flag';
 
 create table if not exists book_info (
-    isbn varchar(32) not null comment 'book isbn',
+    isbn varchar(32) not null comment 'book isbn' primary key ,
     book_name varchar(255) not null comment 'book name',
     book_author varchar(255) not null comment 'book author',
     book_desc text not null comment 'book desc',

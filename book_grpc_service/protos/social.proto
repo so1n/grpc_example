@@ -17,7 +17,7 @@ message GetBookLikesRequest {
 
 message GetBookLikesResult {
   string isbn = 1;
-  string book_like = 2;
+  int32 book_like = 2;
 }
 
 message GetBookLikesListResult {

@@ -1,4 +1,5 @@
 import datetime
+from decimal import Decimal
 from dataclasses import MISSING
 from typing import Any, Optional
 
@@ -52,6 +53,11 @@ def proto_load(obj: Any) -> Any:
         return datetime_to_timestamp(obj)
     elif isinstance(obj, datetime.date):
         return date_to_timestamp(obj)
+    elif isinstance(obj, Decimal):
+        if "." in str(obj):
+            return str(obj)
+        else:
+            return int(obj)
     else:
         return obj
 

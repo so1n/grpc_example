@@ -1,6 +1,6 @@
 import grpc
 import pytest
-from  contextlib import contextmanager
+from contextlib import contextmanager
 from typing import Callable, List, Generator
 
 from book_grpc_service.protos import manager_pb2, manager_pb2_grpc
