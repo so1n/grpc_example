@@ -1,7 +1,9 @@
 import datetime
 from typing import Any, Dict, List, Optional
-from book_grpc_service.helper.conn_proxy import context_proxy
+
 from typing_extensions import TypedDict
+
+from book_grpc_service.helper.conn_proxy import context_proxy
 
 
 class CommentTypedDict(TypedDict):
@@ -18,7 +20,7 @@ class SocialDal(object):
             ret: int = cursor.execute(
                 "INSERT INTO book_like (isbn, `like`, uid) VALUES (%s, %s, %s)"
                 " ON DUPLICATE KEY UPDATE `like`=%s, uid=%s",
-                (isbn, int(like), uid, int(like), uid)
+                (isbn, int(like), uid, int(like), uid),
             )
             if not ret:
                 raise RuntimeError(f"Can not found book by:{isbn}")
@@ -27,7 +29,8 @@ class SocialDal(object):
     def get_book_likes(*, isbn: List[str]) -> List[Dict[str, Any]]:
         with context_proxy.conn.cursor() as cursor:
             cursor.execute(
-                "SELECT isbn, sum(`like`) as `book_like` FROM book_like WHERE isbn in %s GROUP BY isbn", (isbn, )
+                "SELECT isbn, sum(`like`) as `book_like` FROM book_like WHERE isbn in %s GROUP BY isbn",
+                (isbn,),
             )
             return cursor.fetchall() or []
 
@@ -36,7 +39,7 @@ class SocialDal(object):
         with context_proxy.conn.cursor() as cursor:
             cursor.execute(
                 "SELECT isbn, sum(`like`) as `like_cnt` FROM book_like WHERE isbn in %s GROUP BY isbn",
-                (isbn, )
+                (isbn,),
             )
             return cursor.fetchall() or []
 
@@ -45,12 +48,15 @@ class SocialDal(object):
         with context_proxy.conn.cursor() as cursor:
             cursor.execute(
                 "INSERT INTO book_comment (isbn, content, uid) VALUES (%s, %s, %s)",
-                (isbn, content, uid)
+                (isbn, content, uid),
             )
 
     @staticmethod
     def get_book_comment(
-            *, isbn: List[str], create_time: Optional[datetime.datetime] = None, limit: Optional[int] = None
+        *,
+        isbn: List[str],
+        create_time: Optional[datetime.datetime] = None,
+        limit: Optional[int] = None,
     ) -> List[CommentTypedDict]:
         with context_proxy.conn.cursor() as cursor:
             sql: str = "SELECT isbn, content, uid, create_time FROM book_comment WHERE isbn in %s"

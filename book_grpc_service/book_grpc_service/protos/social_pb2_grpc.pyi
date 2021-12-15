@@ -10,46 +10,48 @@ import protos.social_pb2
 class BookSocialStub:
     def __init__(self, channel: grpc.Channel) -> None: ...
     like_book: grpc.UnaryUnaryMultiCallable[
-        protos.social_pb2.LikeBookRequest,
-        google.protobuf.empty_pb2.Empty] = ...
+        protos.social_pb2.LikeBookRequest, google.protobuf.empty_pb2.Empty
+    ] = ...
 
     get_book_like: grpc.UnaryUnaryMultiCallable[
-        protos.social_pb2.GetBookLikesRequest,
-        protos.social_pb2.GetBookLikesListResult] = ...
+        protos.social_pb2.GetBookLikesRequest, protos.social_pb2.GetBookLikesListResult
+    ] = ...
 
     comment_book: grpc.UnaryUnaryMultiCallable[
-        protos.social_pb2.CommentBookRequest,
-        google.protobuf.empty_pb2.Empty] = ...
+        protos.social_pb2.CommentBookRequest, google.protobuf.empty_pb2.Empty
+    ] = ...
 
     get_book_comment: grpc.UnaryUnaryMultiCallable[
         protos.social_pb2.GetBookCommentRequest,
-        protos.social_pb2.GetBookCommentListResult] = ...
-
+        protos.social_pb2.GetBookCommentListResult,
+    ] = ...
 
 class BookSocialServicer(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def like_book(self,
+    def like_book(
+        self,
         request: protos.social_pb2.LikeBookRequest,
         context: grpc.ServicerContext,
     ) -> google.protobuf.empty_pb2.Empty: ...
-
     @abc.abstractmethod
-    def get_book_like(self,
+    def get_book_like(
+        self,
         request: protos.social_pb2.GetBookLikesRequest,
         context: grpc.ServicerContext,
     ) -> protos.social_pb2.GetBookLikesListResult: ...
-
     @abc.abstractmethod
-    def comment_book(self,
+    def comment_book(
+        self,
         request: protos.social_pb2.CommentBookRequest,
         context: grpc.ServicerContext,
     ) -> google.protobuf.empty_pb2.Empty: ...
-
     @abc.abstractmethod
-    def get_book_comment(self,
+    def get_book_comment(
+        self,
         request: protos.social_pb2.GetBookCommentRequest,
         context: grpc.ServicerContext,
     ) -> protos.social_pb2.GetBookCommentListResult: ...
 
-
-def add_BookSocialServicer_to_server(servicer: BookSocialServicer, server: grpc.Server) -> None: ...
+def add_BookSocialServicer_to_server(
+    servicer: BookSocialServicer, server: grpc.Server
+) -> None: ...

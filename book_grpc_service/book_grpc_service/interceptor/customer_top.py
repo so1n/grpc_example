@@ -13,10 +13,10 @@ logger: logging.Logger = logging.getLogger()
 
 class CustomerTopInterceptor(BaseInterceptor):
     def intercept(
-            self,
-            next_handler_method: Callable,
-            request_proto_message: Any,
-            context: grpc.ServicerContext,
+        self,
+        next_handler_method: Callable,
+        request_proto_message: Any,
+        context: grpc.ServicerContext,
     ) -> Any:
         start_time: float = time.time()
         return_initial_metadata: List[Tuple] = [("customer-user-agent", "Python3")]
@@ -28,7 +28,9 @@ class CustomerTopInterceptor(BaseInterceptor):
             if self.metadata_dict.get("customer-user-agent", "") == "Python3":
                 return_initial_metadata.append(("exc_name", e.__class__.__name__))
                 return_initial_metadata.append(("exc_info", str(e)))
-            logging.exception(f"{context_proxy.method} request exc:{e.__class__.__name__} error:{e}")
+            logging.exception(
+                f"{context_proxy.method} request exc:{e.__class__.__name__} error:{e}"
+            )
             raise e
         finally:
             context.send_initial_metadata(return_initial_metadata)

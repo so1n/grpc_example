@@ -1,6 +1,8 @@
 import datetime
-from typing import Optional, List
+from typing import List, Optional
+
 from typing_extensions import TypedDict
+
 from book_grpc_service.helper.conn_proxy import context_proxy
 
 
@@ -14,17 +16,21 @@ class BookTypedDict(TypedDict):
 
 class ManagerDal(object):
     @staticmethod
-    def create_book(*, isbn: str, book_name: str, author: str, book_desc: str, book_url: str) -> None:
+    def create_book(
+        *, isbn: str, book_name: str, author: str, book_desc: str, book_url: str
+    ) -> None:
         with context_proxy.conn.cursor() as cursor:
             cursor.execute(
                 "INSERT INTO book_info (isbn, book_name, book_author, book_desc, book_url) VALUES (%s, %s, %s, %s, %s)",
-                (isbn, book_name, author, book_desc, book_url)
+                (isbn, book_name, author, book_desc, book_url),
             )
 
     @staticmethod
     def delete_book(*, isbn: str) -> None:
         with context_proxy.conn.cursor() as cursor:
-            ret: int = cursor.execute("UPDATE book_info SET deleted=1 WHERE isbn=%s", (isbn, ))
+            ret: int = cursor.execute(
+                "UPDATE book_info SET deleted=1 WHERE isbn=%s", (isbn,)
+            )
             if not ret:
                 raise RuntimeError(f"Can not found book by:{isbn}")
 
@@ -33,7 +39,9 @@ class ManagerDal(object):
         with context_proxy.conn.cursor() as cursor:
             cursor.execute(
                 "SELECT isbn, book_name, book_author, book_desc, book_url, create_time, update_time"
-                " FROM book_info WHERE isbn=%s and deleted=0", (isbn, ))
+                " FROM book_info WHERE isbn=%s and deleted=0",
+                (isbn,),
+            )
             book_info_dict: BookTypedDict = cursor.fetchone() or {}
             if not book_info_dict:
                 raise RuntimeError(f"Can not found book by:{isbn}")
@@ -41,7 +49,7 @@ class ManagerDal(object):
 
     @staticmethod
     def get_book_list(
-            *, create_time: Optional[datetime.datetime] = None, limit: Optional[int] = None
+        *, create_time: Optional[datetime.datetime] = None, limit: Optional[int] = None
     ) -> List[BookTypedDict]:
         with context_proxy.conn.cursor() as cursor:
             sql: str = (

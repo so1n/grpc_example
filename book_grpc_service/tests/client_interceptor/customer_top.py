@@ -4,7 +4,6 @@ from typing import Any, Callable, Dict, List, Optional, Type
 
 from book_grpc_service.helper.conn_proxy import context_proxy
 
-
 from .base import GRPC_RESPONSE, BaseInterceptor, ClientCallDetailsType
 
 logger: logging.Logger = logging.getLogger()
@@ -31,7 +30,9 @@ class CustomerTopInterceptor(BaseInterceptor):
             call_details.metadata.append(("customer-user-agent", "Python3"))  # type: ignore
             call_details.metadata.append(("request_id", context_proxy.request_id))
         response: GRPC_RESPONSE = method(call_details, request_or_iterator)
-        metadata_dict: dict = {item.key: item.value for item in response.initial_metadata()}
+        metadata_dict: dict = {
+            item.key: item.value for item in response.initial_metadata()
+        }
         if metadata_dict.get("customer-user-agent") == "Python3":
             exc_name: str = metadata_dict.get("exc_name", "")
             exc_info: str = metadata_dict.get("exc_info", "")

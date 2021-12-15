@@ -56,4 +56,3 @@ service BookSocial {
   rpc get_book_comment (GetBookCommentRequest) returns (GetBookCommentListResult);
 
 }
-

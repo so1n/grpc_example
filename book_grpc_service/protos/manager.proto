@@ -50,4 +50,3 @@ service BookManager {
   rpc get_book (GetBookRequest) returns (GetBookResult);
   rpc get_book_list (GetBookListRequest) returns (GetBookListResult);
 }
-

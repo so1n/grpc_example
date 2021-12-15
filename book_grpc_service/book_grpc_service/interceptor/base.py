@@ -5,7 +5,7 @@ from typing import Any, Callable, Tuple
 
 import grpc
 
-from book_grpc_service.helper.context import context_proxy, WithContext
+from book_grpc_service.helper.context import WithContext, context_proxy
 
 logger: logging.Logger = logging.getLogger()
 
@@ -77,16 +77,24 @@ class BaseInterceptor(grpc.ServerInterceptor):
         handler_call_details: grpc.HandlerCallDetails,
     ) -> grpc.RpcMethodHandler:
         next_handler: grpc.RpcMethodHandler = continuation(handler_call_details)
-        handler_factory, next_handler_method, grpc_type = _get_factory_and_method(next_handler)
+        handler_factory, next_handler_method, grpc_type = _get_factory_and_method(
+            next_handler
+        )
 
-        def invoke_intercept_method(request_proto_message: Any, context: grpc.ServicerContext) -> Any:
+        def invoke_intercept_method(
+            request_proto_message: Any, context: grpc.ServicerContext
+        ) -> Any:
             if not context_proxy.inited:
                 with WithContext():
                     self._context_handle(handler_call_details)
                     context_proxy.grpc_type = grpc_type
-                    return self.intercept(next_handler_method, request_proto_message, context)
+                    return self.intercept(
+                        next_handler_method, request_proto_message, context
+                    )
             else:
-                return self.intercept(next_handler_method, request_proto_message, context)
+                return self.intercept(
+                    next_handler_method, request_proto_message, context
+                )
 
         return handler_factory(
             invoke_intercept_method,
@@ -95,7 +103,9 @@ class BaseInterceptor(grpc.ServerInterceptor):
         )
 
 
-def _get_factory_and_method(rpc_handler: grpc.RpcMethodHandler) -> Tuple[Callable, Callable, str]:
+def _get_factory_and_method(
+    rpc_handler: grpc.RpcMethodHandler,
+) -> Tuple[Callable, Callable, str]:
     if rpc_handler.unary_unary:  # type: ignore
         return grpc.unary_unary_rpc_method_handler, rpc_handler.unary_unary, "unary_unary"  # type: ignore
     elif rpc_handler.unary_stream:  # type: ignore
